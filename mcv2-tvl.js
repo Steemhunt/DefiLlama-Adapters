@@ -304,8 +304,8 @@ Made with ❤️ by @0xggoma
   tokens
     .sort((a, b) => b[2] - a[2])
     .forEach(([chain, symbol, balance]) => {
-      obj.symbol += `\n${icons[chain]} ${symbol}`;
-      obj.tvl += `\n$${humanizeNumber(balance)}`;
+      obj.symbol += `\n${icons[chain]} ${symbol} | $${humanizeNumber(balance)}`;
+      // obj.tvl += `\n$${humanizeNumber(balance)}`;
     });
 
   networks
@@ -313,21 +313,20 @@ Made with ❤️ by @0xggoma
     .forEach(([chain, balance]) => {
       obj.network += `\n${icons[chain]} ${
         chain[0].toUpperCase() + chain.slice(1)
-      }`;
-      obj.networkTvl += `\n$${humanizeNumber(usdTvls[chain])}`;
+      } | $${humanizeNumber(usdTvls[chain])}`;
+      // obj.networkTvl += `\n$${humanizeNumber(usdTvls[chain])}`;
     });
 
   embed.setTitle("Total TVL $" + humanizeNumber(usdTvls.tvl));
 
-  embed.addField("\u200b", "\u200b");
-  embed.addField("Bonded Asset", obj.symbol, true);
-  embed.addField("\u200b", "\u200b", true);
-  embed.addField("TVL", obj.tvl, true);
+  embed.addField("Bonded Asset | TVL", obj.symbol, true);
+  // embed.addField("TVL", obj.tvl, true);
+  // embed.addField("\u200b", "\u200b", true);
 
   embed.addField("\u200b", "\u200b");
-  embed.addField("Network", obj.network, true);
-  embed.addField("\u200b", "\u200b", true);
-  embed.addField("TVL", obj.networkTvl, true);
+  embed.addField("Network | TVL", obj.network, true);
+  // embed.addField("TVL", obj.networkTvl, true);
+  // embed.addField("\u200b", "\u200b", true);
 
   Object.entries(usdTokenBalances).forEach(([chain, balances]) => {
     console.log(`--- ${chain} ---`);
