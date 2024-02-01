@@ -271,7 +271,6 @@ Fetched <t:${Math.floor(Date.now() / 1000)}:R>
 
 Made with ❤️ by @0xggoma
 \`\`\`
-🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩
 `;
 
   embed.setDescription(description);
@@ -320,15 +319,15 @@ Made with ❤️ by @0xggoma
 
   embed.setTitle("Total TVL $" + humanizeNumber(usdTvls.tvl));
 
+  embed.addField("\u200b", "\u200b");
   embed.addField("Bonded Asset", obj.symbol, true);
+  embed.addField("\u200b", "\u200b", true);
   embed.addField("TVL", obj.tvl, true);
-  embed.addField("\u200b", "\u200b", true);
 
-  embed.addField("\u200b", "🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩");
-
+  embed.addField("\u200b", "\u200b");
   embed.addField("Network", obj.network, true);
-  embed.addField("TVL", obj.networkTvl, true);
   embed.addField("\u200b", "\u200b", true);
+  embed.addField("TVL", obj.networkTvl, true);
 
   Object.entries(usdTokenBalances).forEach(([chain, balances]) => {
     console.log(`--- ${chain} ---`);
