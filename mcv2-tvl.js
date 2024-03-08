@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
+<<<<<<< HEAD:mcv2-tvl.js
 const { ENV_KEYS } = require("./projects/helper/env.js");
+=======
+const handleError = require('./utils/handleError')
+process.on('unhandledRejection', handleError)
+process.on('uncaughtException', handleError)
+
+const { ENV_KEYS } = require("./projects/helper/env");
+>>>>>>> defillama/main:test.js
 const path = require("path");
 require("dotenv").config();
 const {
@@ -11,6 +19,7 @@ const {
 } = require("@defillama/sdk");
 const { util } = require("@defillama/sdk");
 const sdk = require("@defillama/sdk");
+<<<<<<< HEAD:mcv2-tvl.js
 const whitelistedExportKeys = require("./projects/helper/whitelistedExportKeys.json");
 const chainList = require("./projects/helper/chains.json");
 const handleError = require("./utils/handleError.js");
@@ -23,6 +32,13 @@ const { normalizeAddress } = require("./projects/helper/tokenMapping.js");
 const { PromisePool } = require("@supercharge/promise-pool");
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
 const hook = new Webhook(process.env.DISCORD_MINT_CLUB_TVL_WEBHOOK);
+=======
+const whitelistedExportKeys = require('./projects/helper/whitelistedExportKeys.json')
+const chainList = require('./projects/helper/chains.json')
+const { log, diplayUnknownTable, sliceIntoChunks } = require('./projects/helper/utils')
+const { normalizeAddress } = require('./projects/helper/tokenMapping')
+const { PromisePool } = require('@supercharge/promise-pool')
+>>>>>>> defillama/main:test.js
 
 const currentCacheVersion = sdk.cache.currentVersion; // load env for cache
 // console.log(`Using cache version ${currentCacheVersion}`)
