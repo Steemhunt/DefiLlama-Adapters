@@ -24,7 +24,8 @@ const {
 } = require("./projects/helper/utils.js");
 const { normalizeAddress } = require("./projects/helper/tokenMapping.js");
 const { PromisePool } = require("@supercharge/promise-pool");
-const { Webhook, MessageBuilder } = require("discord-webhook-node");
+const { Webhook, EmbedBuilder } = require("@tycrek/discord-hookr");
+const hook = new Webhook(process.env.DISCORD_MINT_CLUB_TVL_WEBHOOK);
 
 const currentCacheVersion = sdk.cache.currentVersion; // load env for cache
 // console.log(`Using cache version ${currentCacheVersion}`)
@@ -238,15 +239,12 @@ sdk.api.abi.call = async (...args) => {
     );
   }
 
-  const embed = new MessageBuilder()
-    .setAuthor(
-      "Mint Club TVL Stats",
-      "https://mint.club/android-chrome-192x192.png",
-      "https://mint.club"
-    )
-    .setColor("#15E6B7")
-    .setURL("https://mint.club")
-    .setTimestamp();
+  const embed = new EmbedBuilder()
+    .setAuthor({
+      name: "Mint Club V2 Stats",
+    })
+    .setURL("https://mint.club/")
+    .setColor("#15E6B7");
 
   const icons = {
     ethereum: "<:eth:1080344679318560809>",
@@ -256,6 +254,7 @@ sdk.api.abi.call = async (...args) => {
     polygon: "<:polygon:1153261595556859924>",
     bsc: "<:bsc:1154689724586397776>",
     base: "<:base:1153261592427896832>",
+    blast: "<:blast:1215657878590062673>",
   };
 
   const description = `
@@ -294,7 +293,7 @@ Made with ❤️ by @0xggoma
       });
 
       // embed.addField(
-      //   `${icons[chain]} ${chain[0].toUpperCase() + chain.slice(1)}`,
+      //   `${''} ${chain[0].toUpperCase() + chain.slice(1)}`,
       //   `**$${humanizeNumber(usdTvls[chain])}**`,
       //   true
       // );
@@ -306,27 +305,41 @@ Made with ❤️ by @0xggoma
   tokens
     .sort((a, b) => b[2] - a[2])
     .forEach(([chain, symbol, balance]) => {
-      obj.symbol += `\n${icons[chain]} ${symbol} | $${humanizeNumber(balance)}`;
+      if (chain === "bsc-staking" || chain === "staking") return;
+      const icon = icons[chain] || "";
+      obj.symbol += `\n${icon} ${symbol} | $${humanizeNumber(
+        balance.toFixed(2)
+      )}`;
       // obj.tvl += `\n$${humanizeNumber(balance)}`;
-    });
-
-  networks
-    .sort((a, b) => b[1] - a[1])
-    .forEach(([chain, balance]) => {
-      obj.network += `\n${icons[chain]} ${
-        chain[0].toUpperCase() + chain.slice(1)
-      } | $${humanizeNumber(usdTvls[chain])}`;
-      // obj.networkTvl += `\n$${humanizeNumber(usdTvls[chain])}`;
     });
 
   embed.setTitle("Total TVL $" + humanizeNumber(usdTvls.tvl));
 
-  embed.addField("Bonded Asset | TVL", obj.symbol, true);
+  embed.addField({
+    name: "Bonded Asset | TVL",
+    value: obj.symbol,
+    inline: true,
+  });
   // embed.addField("TVL", obj.tvl, true);
-  // embed.addField("\u200b", "\u200b", true);
 
-  embed.addField("\u200b", "\u200b");
-  embed.addField("Network | TVL", obj.network, true);
+  // embed.addField({ name: "\u200b", value: "\u200b" });
+  console.log(process.env.DISCORD_MINT_CLUB_TVL_WEBHOOK);
+
+  networks
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([chain, balance]) => {
+      if (chain === "bsc-staking" || chain === "staking") return;
+      const icon = icons[chain] || "";
+      obj.network += `\n${icon} ${
+        chain[0].toUpperCase() + chain.slice(1)
+      } | $${humanizeNumber(usdTvls[chain].toFixed(2))}`;
+      // obj.networkTvl += `\n$${humanizeNumber(usdTvls[chain])}`;
+    });
+
+  const embed2 = new EmbedBuilder()
+    .setColor("#FFA500") // Supplementary color
+    .setTimestamp()
+    .addField({ name: "Network | TVL", value: obj.network, inline: true });
   // embed.addField("TVL", obj.networkTvl, true);
   // embed.addField("\u200b", "\u200b", true);
 
@@ -348,18 +361,19 @@ Made with ❤️ by @0xggoma
   });
   console.log("\ntotal".padEnd(25, " "), humanizeNumber(usdTvls.tvl), "\n");
 
-  // embed.setDescription(description);
-  console.log(description);
-  console.log(description.length);
-  // await hook.send(embed);
-  await fetch(process.env.DISCORD_MINT_CLUB_TVL_WEBHOOK, {
-    method: "POST",
-    body: JSON.stringify({
-      embeds: [embed.payload.embeds[0]],
-    }),
-  }).catch((e) => {
-    console.error(e);
+  console.log(JSON.stringify(embed.payload));
+  hook.addEmbed([embed, embed2]);
+  await hook.send().catch((err) => {
+    console.error(err.name, err.cause);
   });
+  // await fetch(process.env.DISCORD_MINT_CLUB_TVL_WEBHOOK, {
+  //   method: "POST",
+  //   body: JSON.stringify({
+  //     embeds: [embed.payload.embeds[0]],
+  //   }),
+  // }).catch((e) => {
+  //   console.error(e);
+  // });
 
   process.exit(0);
 })();
