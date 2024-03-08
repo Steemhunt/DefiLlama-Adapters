@@ -8,6 +8,7 @@ module.exports = {
 
 const V2_BOND_CONTRACTS = {
   avax: "0x3Fd5B4DcDa968C8e22898523f5343177F94ccfd1",
+  blast: "0x621c335b4BD8f2165E120DC70d3AfcAfc6628681",
 };
 
 const ownTokens = {
@@ -22,6 +23,7 @@ const chains = [
   "polygon",
   "bsc",
   "base",
+  "blast",
 ];
 
 chains.forEach((chain) => {
